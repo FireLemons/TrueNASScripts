@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/scripts/lib/logger"
+
+is_user_approved () {
+  if [ $# -lt 1 ]; then
+    log fail "function is_user_approved requires a prompt message"
+    log info "  Example usage:"
+    log info "    is_user_approved \"Are you sure?\""
+    return -1
+  else
+    read -p "$1 Y/N:" user_response < /dev/tty
+
+    if [[ $user_response =~ [yY].* ]]; then
+      return 0
+    else
+      return 1
+    fi
+  fi
+}

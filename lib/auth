@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/scripts/lib/logger"
+
+verify_non_sudo_user () {
+  if [ "$EUID" -eq 0 ]; then
+    log fail "script cannot be ran as sudo"
+    log info "  Exiting"
+
+    exit 1
+  fi
+}

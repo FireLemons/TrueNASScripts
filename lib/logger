@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# Set colors if available
+if test -t 1; then # if terminal
+    ncolors=$(which tput > /dev/null && tput colors) # supports color
+    if test -n "$ncolors" && test $ncolors -ge 8; then
+        cyan="$(tput setaf 6)"
+        green="$(tput setaf 2)"
+        normal="$(tput sgr0)"
+        red="$(tput setaf 1)"
+        yellow="$(tput setaf 3)"
+    fi
+fi
+
+# Colorized output
+#   Param $1 string | The logging level: info, warning, or error
+#   Param $2 string | The message to be logged
+function log () {
+  if [[ $# -lt 2 ]]; then
+    echo "${red}ERROR: function log was run with insufficient parameters ${normal}"
+    return
+  fi
+  
+  case $1 in
+    info)
+      printf "${cyan}INFO: $2 ${normal}\n"
+    ;;
+    okay)
+      printf "${green}OKAY: $2 ${normal}\n"
+    ;;
+    fail)
+      printf "${red}FAIL: $2 ${normal}\n"
+    ;;
+    warn)
+      printf "${yellow}WARN: $2 ${normal}\n"
+    ;;
+    *)
+      echo "${red}FAIL: Unrecognized log level: $1 ${normal}"
+    ;;
+  esac
+}
