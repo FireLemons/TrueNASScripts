@@ -19,6 +19,7 @@ set_timezone () {
 
     if [ "$chronjobs" = "[]" ]; then
       log warn "changing timezone to $CST"
+      sudo timedatectl set-timezone "$CST"
     else
       log warn 'You have the following cron jobs:'
       log warn "$cronjobs"
