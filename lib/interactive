@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/scripts/lib/logger"
+source "$REPO_ROOT/lib/logger"
 
 is_user_approved () {
   if [ $# -lt 1 ]; then

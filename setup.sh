@@ -1,7 +1,7 @@
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/scripts/lib/logger"
-source "$REPO_ROOT/scripts/lib/auth"
-source "$REPO_ROOT/scripts/lib/interactive"
+source "$REPO_ROOT/lib/auth"
+source "$REPO_ROOT/lib/interactive"
+source "$REPO_ROOT/lib/logger"
 
 verify_non_sudo_user
 
