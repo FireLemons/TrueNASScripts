@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/lib/auth"
 source "$REPO_ROOT/lib/interactive"
