@@ -6,7 +6,8 @@ git clone https://github.com/FireLemons/TrueNASScripts.git
 
 cd TrueNASScripts
 
-./setup.sh
+# run the setup
+bash ./setup.sh
 ```
 
 # Scripts
