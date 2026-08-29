@@ -7,6 +7,20 @@ source "$REPO_ROOT/lib/logger"
 
 verify_non_sudo_user
 
+SCRIPT_PERSISTENT_STORAGE='data/scripts'
+
+does_persistent_dataset_for_scripts_exist() {
+  local dataset="$1"
+  zfs list "$dataset" &>/dev/null
+}
+
+ensure_persisted_dataset_for_scripts () {
+  zfs list data/scripts >/dev/null 2>&1 || sudo zfs create data/scripts &&
+
+  sudo chmod 755 /mnt/data/scripts &&
+  sudo chown $USER:$USER /mnt/data/scripts
+}
+
 set_timezone () {
   local CST='America/Chicago'
   local current_timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
@@ -33,6 +47,15 @@ set_timezone () {
     fi
   fi
 }
+
+if ensure_persisted_dataset_for_scripts; then
+  log okay 'A persistent space to store these scripts has been confirmed'
+  # TODO
+else
+  log fail 'Failed to ensure a persistent space to store these scripts'
+  log info 'Exiting'
+  exit 1
+fi
 
 if set_timezone; then
   log info 'success'
