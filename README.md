@@ -4,10 +4,8 @@
 # download the scripts
 git clone https://github.com/FireLemons/TrueNASScripts.git
 
-cd TrueNASScripts
-
 # run the setup
-bash ./setup.sh
+cd TrueNASScripts && bash setup.sh
 ```
 
 # Scripts
