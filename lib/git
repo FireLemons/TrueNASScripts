@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/lib/logger"
+
+does_git_repo_exist () {
+  if [ $# -lt 1 ]; then
+    log fail "function does_git_repo_exist requires a file path"
+    log info "  Example usage:"
+    log info "    does_git_repo_exist \"/path/to/repo/\""
+    return -1
+  fi
+
+  local dir="$1"
+
+  if [[ ! -d "$dir" ]]; then
+      return 1
+  fi
+  
+  git -C "$dir" rev-parse --git-dir > /dev/null 2>&1
+}

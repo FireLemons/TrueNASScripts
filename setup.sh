@@ -2,16 +2,21 @@
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/lib/auth"
+source "$REPO_ROOT/lib/git"
 source "$REPO_ROOT/lib/interactive"
 source "$REPO_ROOT/lib/logger"
 
 verify_non_sudo_user
 
-SCRIPT_PERSISTENT_STORAGE='data/scripts'
+SCRIPT_PERSISTENT_STORAGE_FILE_PATH='/mnt/data/scripts/TrueNASScripts/'
 
-does_persistent_dataset_for_scripts_exist() {
+does_persistent_dataset_for_scripts_exist () {
   local dataset="$1"
   zfs list "$dataset" &>/dev/null
+}
+
+does_persistent_dataset_have_scripts_installed () {
+  does_git_repo_exist SCRIPT_PERSISTENT_STORAGE_FILE_PATH
 }
 
 ensure_persisted_dataset_for_scripts () {
@@ -42,23 +47,36 @@ set_timezone () {
         sudo timedatectl set-timezone "$CST"
         return 0
       else
+        log info 'adjust cron jobs to the new timezone then '
+        log info 'exiting'
         return 1
       fi
     fi
   fi
 }
 
-if ensure_persisted_dataset_for_scripts; then
-  log okay 'A persistent space to store these scripts has been confirmed'
-  # TODO
-else
-  log fail 'Failed to ensure a persistent space to store these scripts'
-  log info 'Exiting'
-  exit 1
-fi
-
 if set_timezone; then
   log info 'success'
 else
   log fail 'nope'
+fi
+
+if ensure_persisted_dataset_for_scripts; then
+  log okay 'A persistent space to store these scripts has been confirmed'
+  
+  if does_git_repo_exist; then
+    log info "scripts already installed"
+    cd SCRIPT_PERSISTENT_STORAGE_FILE_PATH
+    git fetch origin
+    git reset --hard origin/main
+    git clean -fd
+  else
+    log info "installing scripts to $SCRIPT_PERSISTENT_STORAGE_FILE_PATH"
+    cd '/mnt/data/scripts/'
+    git clone https://github.com/FireLemons/TrueNASScripts.git
+  fi
+else
+  log fail 'Failed to ensure a persistent space to store these scripts'
+  log info 'Exiting'
+  exit 1
 fi
