@@ -8,7 +8,7 @@ source "$REPO_ROOT/lib/logger"
 
 verify_non_sudo_user
 
-SCRIPT_PERSISTENT_STORAGE_FILE_PATH='/mnt/data/scripts/TrueNASScripts/'
+SCRIPT_PERSISTENT_STORAGE_DIR_PATH='/mnt/data/scripts/TrueNASScripts/'
 
 does_persistent_dataset_for_scripts_exist () {
   local dataset="$1"
@@ -16,7 +16,7 @@ does_persistent_dataset_for_scripts_exist () {
 }
 
 does_persistent_dataset_have_scripts_installed () {
-  does_git_repo_exist SCRIPT_PERSISTENT_STORAGE_FILE_PATH
+  does_git_repo_exist SCRIPT_PERSISTENT_STORAGE_DIR_PATH
 }
 
 ensure_persisted_dataset_for_scripts () {
@@ -64,14 +64,14 @@ fi
 if ensure_persisted_dataset_for_scripts; then
   log okay 'A persistent space to store these scripts has been confirmed'
   
-  if does_git_repo_exist; then
+  if does_git_repo_exist $SCRIPT_PERSISTENT_STORAGE_DIR_PATH; then
     log info "scripts already installed"
-    cd SCRIPT_PERSISTENT_STORAGE_FILE_PATH
+    cd SCRIPT_PERSISTENT_STORAGE_DIR_PATH
     git fetch origin
     git reset --hard origin/main
     git clean -fd
   else
-    log info "installing scripts to $SCRIPT_PERSISTENT_STORAGE_FILE_PATH"
+    log info "installing scripts to $SCRIPT_PERSISTENT_STORAGE_DIR_PATH"
     cd '/mnt/data/scripts/'
     git clone https://github.com/FireLemons/TrueNASScripts.git
   fi
