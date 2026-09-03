@@ -16,7 +16,7 @@ does_persistent_dataset_for_scripts_exist () {
 }
 
 does_persistent_dataset_have_scripts_installed () {
-  does_git_repo_exist SCRIPT_PERSISTENT_STORAGE_DIR_PATH
+  does_git_repo_exist $SCRIPT_PERSISTENT_STORAGE_DIR_PATH
 }
 
 ensure_persisted_dataset_for_scripts () {
@@ -66,7 +66,7 @@ if ensure_persisted_dataset_for_scripts; then
   
   if does_git_repo_exist $SCRIPT_PERSISTENT_STORAGE_DIR_PATH; then
     log info "scripts already installed"
-    cd SCRIPT_PERSISTENT_STORAGE_DIR_PATH
+    cd $SCRIPT_PERSISTENT_STORAGE_DIR_PATH
     git fetch origin
     git reset --hard origin/main
     git clean -fd
