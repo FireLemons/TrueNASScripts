@@ -49,7 +49,7 @@ set_timezone () {
       else
         log info 'adjust cron jobs to the new timezone then '
         log info 'exiting'
-        return 1
+        exit 1
       fi
     fi
   fi
