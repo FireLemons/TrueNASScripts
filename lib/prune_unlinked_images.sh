@@ -6,10 +6,15 @@ source "$REPO_ROOT/lib/logger"
 IS_DRY_RUN=true
 LOCAL_WIKI_PORT="8090"
 MW_CONTAINER="ix-wiki-wiki-1"
-DELETE_REASON="Automated file cleanup"
 
 container_exists() {
   [ -n "$(sudo docker ps -a --filter "name=^/${MW_CONTAINER}$" --format '{{.Names}}')" ]
+}
+
+delete_unused_images() {
+  echo "$1" \
+    | sudo docker exec -i -w /var/www/html $MW_CONTAINER \
+        php maintenance/run.php deleteBatch -r "Bulk image cleanup"
 }
 
 fetch_unused_image_names() {
@@ -57,5 +62,8 @@ else
   log info "Unused filed to be deleted:"
   echo "$UNUSED_IMAGE_FILES"
 
-  # TODO delete the files
+  if ! delete_unused_images "$UNUSED_IMAGE_FILES"; then
+    log fail "Failed to delete the images" >&2
+    exit 4
+  fi
 fi
