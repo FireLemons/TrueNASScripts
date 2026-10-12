@@ -11,6 +11,15 @@ DELETE_REASON="Automated file cleanup"
 
 UNUSED_IMAGE_FILES=$(curl -s "http://localhost:$LOCAL_WIKI_PORT/api.php?action=query&list=querypage&qppage=Unusedimages&qplimit=max&format=json" | jq -r '.query.querypage.results[].title')
 
+container_exists() {
+  [ -n "$(sudo docker ps -a --filter "name=^/${MW_CONTAINER}$" --format '{{.Names}}')" ]
+}
+
+if ! container_exists; then
+  log fail "Failed to find mediawiki docker container. Exiting."
+  exit 1
+fi
+
 for arg in "$@"; do
   case $arg in
     --disable-dry-run) IS_DRY_RUN=false ;;
