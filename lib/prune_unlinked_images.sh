@@ -4,7 +4,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/lib/logger"
 
 DELETE_PERMISSION_USER="Admin" # Don't hard code. Use env variable
-IS_DRY_RUN=false
+IS_DRY_RUN=true
 LOCAL_WIKI_PORT="8090"
 MW_CONTAINER="ix-wiki-wiki-1"
 DELETE_REASON="Automated file cleanup"
@@ -13,7 +13,7 @@ UNUSED_IMAGE_FILES=$(curl -s "http://localhost:$LOCAL_WIKI_PORT/api.php?action=q
 
 for arg in "$@"; do
   case $arg in
-    --dry-run) IS_DRY_RUN=true ;;
+    --disable-dry-run) IS_DRY_RUN=false ;;
   esac
 done
 
