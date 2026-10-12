@@ -3,7 +3,6 @@
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/lib/logger"
 
-DELETE_PERMISSION_USER="Admin" # Don't hard code. Use env variable
 IS_DRY_RUN=true
 LOCAL_WIKI_PORT="8090"
 MW_CONTAINER="ix-wiki-wiki-1"
@@ -13,7 +12,18 @@ container_exists() {
   [ -n "$(sudo docker ps -a --filter "name=^/${MW_CONTAINER}$" --format '{{.Names}}')" ]
 }
 
-fetch_unused_images() {
+fetch_mediawiki_admin_username() {
+  local admin_username
+  
+  if ! admin_username=$(sudo docker exec "$MW_CONTAINER" printenv "WIKI_ADMIN_USER" 2>/dev/null); then
+      log fail "Failed to access admin username from mediawiki docker container environment variable" >&2
+      return 1
+  fi
+
+  echo "$admin_username"
+}
+
+fetch_unused_image_names() {
   local url response titles
   url="http://localhost:${LOCAL_WIKI_PORT}/api.php?action=query&list=querypage&qppage=Unusedimages&qplimit=max&format=json"
 
@@ -35,7 +45,8 @@ fetch_unused_images() {
   printf '%s\n' "$titles"
 }
 
-UNUSED_IMAGE_FILES=$(fetch_unused_images)
+DELETE_PERMISSION_USER=$(fetch_mediawiki_admin_username)
+UNUSED_IMAGE_FILES=$(fetch_unused_image_names)
 
 if ! container_exists; then
   log fail "Failed to find mediawiki docker container. Exiting."
@@ -54,4 +65,6 @@ if $IS_DRY_RUN; then
 else
   log info "Unused filed to be deleted:"
   echo "$UNUSED_IMAGE_FILES"
+
+  log info "$DELETE_PERMISSION_USER"
 fi
