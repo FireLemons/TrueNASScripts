@@ -12,17 +12,6 @@ container_exists() {
   [ -n "$(sudo docker ps -a --filter "name=^/${MW_CONTAINER}$" --format '{{.Names}}')" ]
 }
 
-fetch_mediawiki_admin_username() {
-  local admin_username
-  
-  if ! admin_username=$(sudo docker exec "$MW_CONTAINER" printenv "WIKI_ADMIN_USER" 2>/dev/null); then
-      log fail "Failed to access admin username from mediawiki docker container environment variable" >&2
-      return 1
-  fi
-
-  echo "$admin_username"
-}
-
 fetch_unused_image_names() {
   local url response titles
   url="http://localhost:${LOCAL_WIKI_PORT}/api.php?action=query&list=querypage&qppage=Unusedimages&qplimit=max&format=json"
@@ -45,12 +34,14 @@ fetch_unused_image_names() {
   printf '%s\n' "$titles"
 }
 
-DELETE_PERMISSION_USER=$(fetch_mediawiki_admin_username)
-UNUSED_IMAGE_FILES=$(fetch_unused_image_names)
+if ! UNUSED_IMAGE_FILES=$(fetch_unused_image_names); then
+  log info "Exiting"
+  exit 2
+fi
 
 if ! container_exists; then
   log fail "Failed to find mediawiki docker container. Exiting."
-  exit 1
+  exit 3
 fi
 
 for arg in "$@"; do
@@ -66,5 +57,5 @@ else
   log info "Unused filed to be deleted:"
   echo "$UNUSED_IMAGE_FILES"
 
-  log info "$DELETE_PERMISSION_USER"
+  # TODO delete the files
 fi
