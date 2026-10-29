@@ -26,7 +26,7 @@ truenas_cron_create() {
   local minute hour date month weekday extra
 
   read -r minute hour date month weekday extra <<<"$schedule"
-  if [[ -z "$dow" || -n "$extra" ]]; then
+  if [[ -z "$weekday" || -n "$extra" ]]; then
     log fail 'cron string in wrong format'
     return 1
   fi
