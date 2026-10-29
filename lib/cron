@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/lib/logger"
+
+print_cron_create_help () {
+  log info 'Usage:'
+  log info '  truenas_cron_create <cron string> <command> [description]'
+  log info '  Example:'
+  log info "    truenas_cron_create '30 2 * * Sat' 'bash /usr/local/bin/backup.sh' 'Backup'"
+}
+
+truenas_cron_create() {
+  local schedule="$1"
+  local command="$2"
+  local description="${3:-}"
+  local user
+
+  user=$(whoami)
+
+  if [[ -z "$schedule" || -z "$command" ]]; then
+    print_cron_create_help
+    return 1
+  fi
+
+  local minute hour date month weekday extra
+
+  read -r minute hour date month weekday extra <<<"$schedule"
+  if [[ -z "$dow" || -n "$extra" ]]; then
+    log fail 'cron string in wrong format'
+    return 1
+  fi
+
+  local job_definition
+
+  job_definition=$(jq -n \
+    --arg user "$user" \
+    --arg command "$command" \
+    --arg description "$description" \
+    --arg minute "$minute" \
+    --arg hour "$hour" \
+    --arg date "$date" \
+    --arg month "$month" \
+    --arg weekday "$weekday" \
+    '{
+      user: $user,
+      command: $command,
+      description: $description,
+      enabled: true,
+      stdout: true,
+      stderr: true,
+      schedule: {
+        minute: $minute,
+        hour: $hour,
+        dom: $date,
+        month: $month,
+        dow: $weekday
+      }
+    }')
+
+  log info "midclt call cronjob.create $job_definition"
+  # midclt call cronjob.create "$job_definition"
+}

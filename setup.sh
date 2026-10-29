@@ -2,6 +2,7 @@
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/lib/auth"
+source "$REPO_ROOT/lib/cron"
 source "$REPO_ROOT/lib/git"
 source "$REPO_ROOT/lib/interactive"
 source "$REPO_ROOT/lib/logger"
@@ -26,7 +27,7 @@ ensure_persisted_dataset_for_scripts () {
   sudo chown $USER:$USER /mnt/data/scripts
 }
 
-set_timezone () {
+set_central_timezone () {
   local CST='America/Chicago'
   local current_timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 
@@ -55,7 +56,7 @@ set_timezone () {
   fi
 }
 
-if set_timezone; then
+if set_central_timezone; then
   log info 'success'
 else
   log fail 'nope'
@@ -75,6 +76,8 @@ if ensure_persisted_dataset_for_scripts; then
     cd '/mnt/data/scripts/'
     git clone https://github.com/FireLemons/TrueNASScripts.git
   fi
+
+  truenas_cron_create '*/2 * * * *' "bash $SCRIPT_PERSISTENT_STORAGE_DIR_PATH/prune_unlinked_images.sh" 'Backup' 
 else
   log fail 'Failed to ensure a persistent space to store these scripts'
   log info 'Exiting'
