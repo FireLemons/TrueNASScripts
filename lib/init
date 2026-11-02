@@ -1,0 +1,28 @@
+if [[ -z ${REPO_ROOT:-} ]]; then
+  VAR=$(git rev-parse --show-toplevel) || {
+    echo "FAIL: Failed to get repo root(required for importing libraries)" >&2
+    exit 1
+  }
+fi
+
+$LIB_PATH="$REPO_ROOT/lib"
+source "$LIB_PATH/logger"
+
+import() {
+  local name=${1:-}
+
+  if [[ -z $name ]]; then
+    log fail "missing library name"
+    return 2
+  fi
+
+  local path="$LIB_DIR/$name"
+
+  if [[ ! -f $path || ! -r $path ]]; then
+    log fail "failed to find library at $path"
+    log fail "  library is possibly not readable"
+    return 1
+  fi
+
+  source "$path"
+}
