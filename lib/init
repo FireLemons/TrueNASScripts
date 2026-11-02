@@ -16,7 +16,7 @@ import() {
     return 2
   fi
 
-  local path="$LIB_DIR/$name"
+  local path="$LIB_PATH/$name"
 
   if [[ ! -f $path || ! -r $path ]]; then
     log fail "failed to find library at $path"
