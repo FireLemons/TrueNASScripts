@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -z ${REPO_ROOT:-} ]]; then
-  VAR=$(git rev-parse --show-toplevel) || {
+  REPO_ROOT=$(git rev-parse --show-toplevel) || {
     echo "FAIL: Failed to get repo root(required for importing libraries)" >&2
     exit 1
   }
