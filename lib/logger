@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Set colors if available
 if test -t 1; then # if terminal
     ncolors=$(which tput > /dev/null && tput colors) # supports color
