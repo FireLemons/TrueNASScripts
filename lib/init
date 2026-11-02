@@ -5,7 +5,7 @@ if [[ -z ${REPO_ROOT:-} ]]; then
   }
 fi
 
-$LIB_PATH="$REPO_ROOT/lib"
+LIB_PATH="$REPO_ROOT/lib"
 source "$LIB_PATH/logger"
 
 import() {
