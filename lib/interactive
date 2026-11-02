@@ -1,9 +1,6 @@
 [[ -n "${_IS_LIB_INTERACTIVE_LOADED:-}" ]] && return 0
 _IS_LIB_INTERACTIVE_LOADED=1
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/logger"
-
 is_user_approved () {
   if [ $# -lt 1 ]; then
     log fail "function is_user_approved requires a prompt message"

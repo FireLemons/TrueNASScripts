@@ -1,9 +1,6 @@
 [[ -n "${_IS_LIB_CRON_LOADED:-}" ]] && return 0
 _IS_LIB_CRON_LOADED=1
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/logger"
-
 verify_non_sudo_user () {
   if [ "$EUID" -eq 0 ]; then
     log fail "script cannot be ran as sudo"

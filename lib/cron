@@ -1,9 +1,6 @@
 [[ -n "${_IS_LIB_CRON_LOADED:-}" ]] && return 0
 _IS_LIB_CRON_LOADED=1
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/logger"
-
 print_cron_create_help () {
   log info 'Usage:'
   log info '  truenas_cron_create <cron string> <command> [description]'

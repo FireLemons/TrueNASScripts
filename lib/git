@@ -1,9 +1,6 @@
 [[ -n "${_IS_LIB_GIT_LOADED:-}" ]] && return 0
 _IS_LIB_GIT_LOADED=1
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/logger"
-
 does_git_repo_exist () {
   if [ $# -lt 1 ]; then
     log fail "function does_git_repo_exist requires a file path"
