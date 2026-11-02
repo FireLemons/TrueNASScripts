@@ -1,5 +1,5 @@
-[[ -n "${_IS_LIB_CRON_LOADED:-}" ]] && return 0
-_IS_LIB_CRON_LOADED=1
+[[ -n "${_IS_LIB_AUTH_LOADED:-}" ]] && return 0
+_IS_LIB_AUTH_LOADED=1
 
 verify_non_sudo_user () {
   if [ "$EUID" -eq 0 ]; then
