@@ -1,3 +1,6 @@
+[[ -n "${_IS_LIB_INTERACTIVE_LOADED:-}" ]] && return 0
+_IS_LIB_INTERACTIVE_LOADED=1
+
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/lib/logger"
 

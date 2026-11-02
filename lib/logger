@@ -1,3 +1,6 @@
+[[ -n "${_IS_LIB_LOGGER_LOADED:-}" ]] && return 0
+_IS_LIB_LOGGER_LOADED=1
+
 # Set colors if available
 if test -t 1; then # if terminal
     ncolors=$(which tput > /dev/null && tput colors) # supports color
