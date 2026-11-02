@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/auth"
-source "$REPO_ROOT/lib/cron"
-source "$REPO_ROOT/lib/git"
-source "$REPO_ROOT/lib/interactive"
-source "$REPO_ROOT/lib/logger"
+if [[ -z ${REPO_ROOT:-} ]]; then
+  VAR=$(git rev-parse --show-toplevel) || {
+    echo "FAIL: Failed to get repo root(required for importing libraries)" >&2
+    exit 1
+  }
+fi
+
+source "$REPO_ROOT/lib/init"
+
+import 'auth'
+import 'cron'
+import 'git'
+import 'interactive'
 
 verify_non_sudo_user
 
