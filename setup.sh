@@ -73,7 +73,7 @@ if ensure_persisted_dataset_for_scripts; then
   log okay 'A persistent space to store these scripts has been confirmed'
   
   if does_git_repo_exist $SCRIPT_PERSISTENT_STORAGE_DIR_PATH; then
-    log info "scripts already installed"
+    log info "Scripts already installed. Updating..."
     cd $SCRIPT_PERSISTENT_STORAGE_DIR_PATH
     git fetch origin
     git reset --hard origin/main
