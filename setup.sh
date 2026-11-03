@@ -34,35 +34,6 @@ ensure_persisted_dataset_for_scripts () {
   sudo chown $USER:$USER /mnt/data/scripts
 }
 
-set_central_timezone () {
-  local CST='America/Chicago'
-  local current_timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
-
-  if [ "$current_timezone" = "$CST" ]; then
-    log okay 'timezone set correctly'
-    return 0
-  else
-    local chronjobs=$(midclt call cronjob.query)
-
-    if [ "$chronjobs" = "[]" ]; then
-      log warn "changing timezone to $CST"
-      sudo timedatectl set-timezone "$CST"
-    else
-      log warn 'You have the following cron jobs:'
-      log warn "$cronjobs"
-
-      if is_user_approved "change the timezone to $CST?"; then
-        sudo timedatectl set-timezone "$CST"
-        return 0
-      else
-        log info 'adjust cron jobs to the new timezone then '
-        log info 'exiting'
-        exit 1
-      fi
-    fi
-  fi
-}
-
 if set_central_timezone; then
   log info 'success'
 else
