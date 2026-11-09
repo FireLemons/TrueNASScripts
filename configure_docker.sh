@@ -14,6 +14,8 @@ import 'docker'
 
 verify_sudo_user
 
+wait_for_docker_service
+
 if configure_docker_logging; then
   log okay 'docker logging congifured'
 fi
