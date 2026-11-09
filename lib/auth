@@ -9,3 +9,12 @@ verify_non_sudo_user () {
     exit 1
   fi
 }
+
+verify_sudo_user () {
+  if [ "$EUID" -ne 0 ]; then
+    log fail "script must be as sudo"
+    log info "  Exiting"
+
+    exit 1
+  fi
+}
