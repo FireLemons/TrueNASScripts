@@ -39,6 +39,26 @@ configure_docker_logging () {
   fi
 }
 
+create_post_init_task_for_docker_daemon_config () {
+  local script_directory=$1
+
+  if [ $# -lt 1 ]; then
+    log fail "create_post_init_task_for_docker_daemon_config requires a directory path"
+    log info "  Example usage:"
+    log info "    create_post_init_task_for_docker_daemon_config \"/path/to/script_directory/\""
+    return 1
+  fi
+
+  midclt call initshutdownscript.create '{
+    "type": "SCRIPT",
+    "script": "'"$script_directory"'configure_docker.sh",
+    "when": "POSTINIT",
+    "enabled": true,
+    "timeout": 120,
+    "comment": "Confirgure Docker Logging Storage Limits"
+  }'
+}
+
 get_daemon_config() {
   if [[ ! -s "$DAEMON_CONFIG_PATH" ]]; then
     echo '{}'
