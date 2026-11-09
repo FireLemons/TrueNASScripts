@@ -1,0 +1,53 @@
+[[ -n "${_IS_LIB_DOCKER_LOADED:-}" ]] && return 0
+_IS_LIB_DOCKER_LOADED=1
+
+DAEMON_CONFIG_PATH=/etc/docker/daemon.json
+
+apply_daemon_config () {
+  local new_config=$1
+
+  printf '%s\n' "$new_config" > "$DAEMON_CONFIG_PATH" || return 1
+  systemctl restart docker || return 1
+}
+
+backup_daemon_config () {
+  if [[ -f "$DAEMON_CONFIG_PATH" ]]; then
+    cp -a "$DAEMON_CONFIG_PATH" "$DAEMON_CONFIG_PATH.bak" || return 1
+  fi
+}
+
+get_daemon_config() {
+  if [[ ! -s "$DAEMON_CONFIG_PATH" ]]; then
+    echo '{}'
+    return 0
+  fi
+
+  jq . "$DAEMON_CONFIG_PATH" || return 1
+}
+
+make_logging_config () {
+  local current_config=$1
+
+  jq --argjson current_config "$current_config" -n '
+    $current_config * {"log-opts": {"max-size": "256m", "max-file": "4"}}
+  ' || return 1
+}
+
+configure_docker_logging () {
+  local current_config new_config
+
+  if ! current_config=$(get_daemon_config); then
+    log fail 'failed to get daemon.json'
+    return 1
+  fi
+
+  if ! new_config=$(make_logging_config "$current_config"); then
+    log fail 'failed to build config'
+    return 1
+  fi
+
+  if ! apply_daemon_config "$new_config"; then
+    log fail 'failed to apply config'
+    return 1
+  fi
+}
