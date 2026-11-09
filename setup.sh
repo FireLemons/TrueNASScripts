@@ -61,5 +61,10 @@ else
   git clone https://github.com/FireLemons/TrueNASScripts.git
 fi
 
-create_post_init_task_for_docker_daemon_config $SCRIPT_PERSISTENT_STORAGE_DIR_PATH
+if create_post_init_task_for_docker_daemon_config $SCRIPT_PERSISTENT_STORAGE_DIR_PATH; then
+  log okay 'created post init task to configure docker logging'
+else
+  log fail 'failed to create post init task to configure docker logging'
+fi
+
 truenas_cron_create '*/2 * * * *' "bash $SCRIPT_PERSISTENT_STORAGE_DIR_PATH/prune_unlinked_images.sh" 'Backup'
