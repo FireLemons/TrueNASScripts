@@ -7,6 +7,8 @@ apply_daemon_config () {
   local new_config=$1
 
   printf '%s\n' "$new_config" > "$DAEMON_CONFIG_PATH" || return 1
+
+  log info 'restarting docker services'
   systemctl restart docker || return 1
 }
 
@@ -35,6 +37,8 @@ make_logging_config () {
 
 configure_docker_logging () {
   local current_config new_config
+
+  log info 'configuring docker logging'
 
   if ! current_config=$(get_daemon_config); then
     log fail 'failed to get daemon.json'
