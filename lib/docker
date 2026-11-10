@@ -2,6 +2,7 @@
 _IS_LIB_DOCKER_LOADED=1
 
 DAEMON_CONFIG_PATH=/etc/docker/daemon.json
+INIT_TASK_COMMENT='Confirgure Docker Logging Storage Limits'
 
 apply_daemon_config () {
   local new_config=$1
@@ -30,14 +31,20 @@ create_post_init_task_for_docker_daemon_config () {
 
   log info 'creating post init task to configure docker logging'
 
-  midclt call initshutdownscript.create '{
-    "type": "SCRIPT",
-    "script": "'"$script_directory"'configure_docker.sh",
-    "when": "POSTINIT",
-    "enabled": true,
-    "timeout": 120,
-    "comment": "Confirgure Docker Logging Storage Limits"
-  }'
+  if ! does_post_init_task_for_docker_daemon_config_exist; then
+    midclt call initshutdownscript.create '{
+      "type": "SCRIPT",
+      "script": "'"$script_directory"'configure_docker.sh",
+      "when": "POSTINIT",
+      "enabled": true,
+      "timeout": 120,
+      "comment": "'"$INIT_TASK_COMMENT"'"
+    }'
+  fi
+}
+
+does_post_init_task_for_docker_daemon_config_exist () {
+  midclt call initshutdownscript.query | jq -e --arg c "$INIT_TASK_COMMENT" 'any(.[]; .comment == $c)' >/dev/null
 }
 
 get_daemon_config() {
