@@ -27,6 +27,8 @@ configure_docker_logging () {
     return 1
   fi
 
+  backup_daemon_config
+
   if ! apply_daemon_config "$new_config"; then
     log fail 'failed to apply config'
     return 1
