@@ -29,9 +29,11 @@ create_post_init_task_for_docker_daemon_config () {
     return 1
   fi
 
-  log info 'creating post init task to configure docker logging'
+  log info 'ensuring post init task to configure docker logging exists'
 
   if ! does_post_init_task_for_docker_daemon_config_exist; then
+    log info 'creating post init task to configure docker logging'
+
     midclt call initshutdownscript.create '{
       "type": "SCRIPT",
       "script": "'"$script_directory"'configure_docker.sh",

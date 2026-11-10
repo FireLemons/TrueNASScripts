@@ -62,7 +62,7 @@ else
 fi
 
 if create_post_init_task_for_docker_daemon_config $SCRIPT_PERSISTENT_STORAGE_DIR_PATH; then
-  log okay 'created post init task to configure docker logging'
+  log okay 'post init task to configure docker logging set up'
 else
   log fail 'failed to create post init task to configure docker logging'
 fi
