@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/log"
+if [[ -z ${REPO_ROOT:-} ]]; then
+  REPO_ROOT=$(git rev-parse --show-toplevel) || {
+    echo "FAIL: Failed to get repo root(required for importing libraries)" >&2
+    exit 1
+  }
+fi
+
+source "$REPO_ROOT/lib/init"
 
 IS_DRY_RUN=true
 LOCAL_WIKI_PORT="8090"
