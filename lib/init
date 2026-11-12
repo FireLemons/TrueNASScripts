@@ -6,7 +6,7 @@ if [[ -z ${REPO_ROOT:-} ]]; then
 fi
 
 LIB_PATH="$REPO_ROOT/lib"
-source "$LIB_PATH/logger"
+source "$LIB_PATH/log"
 
 import() {
   local name=${1:-}

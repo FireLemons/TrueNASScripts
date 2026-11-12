@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/lib/logger"
+source "$REPO_ROOT/lib/log"
 
 IS_DRY_RUN=true
 LOCAL_WIKI_PORT="8090"
